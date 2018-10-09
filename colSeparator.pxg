@@ -1,0 +1,70 @@
+#%praxis.version 4.0.0
+@ ./colSeperator video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+     @P(1) @Type.Number(min = 0, max = 1, def = 1)
+     double amount;
+     @P(2) double scale;
+    
+    void updateUniforms() \{
+         shader.set(\"amount\", amount*scale);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+uniform sampler2D texture;
+uniform vec2 texOffset;
+uniform float amount;
+
+
+void main() \{
+  //vec2 texg = distort(vertTexCoord.st);
+  //float green = texture2D(texture, tex).green;
+  //vec2 texr = distort(vertTexCoord.st + vec2(amount/100.0,0));
+  //float red = texture2D(texture, tex).red;
+  //vec2 texb = distort(vertTexCoord.st - vec2(amount/100.0,0));
+  //float blue = texture2D(texture, tex).blue;
+  //gl_FragColor = vec4(red,green,blue,1.0);
+
+gl_FragColor = vec4(texture2D(texture, vertTexCoord.st - vec2(amount/100.0,0)).x ,   texture2D(texture, vertTexCoord.st).y,    texture2D(texture, vertTexCoord.st + vec2(amount/100.0,0)).z,    1.0);
+\}"
+  .amount 7.082826058127413E-4
+  .scale 50
+}
