@@ -12,3 +12,7 @@ http://www.beadsproject.net
 (c) Holger Crysandt / Ollie Bown
 
 creates array with half the number floats of audioblock size elementes with lowest to highest frequencies
+
+## vibrancy.pxg
+change vibrancy of image
+adapted from zoidbergs code https://www.interactiveshaderformat.com/sketches/282
