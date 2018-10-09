@@ -16,3 +16,7 @@ creates array with half the number floats of audioblock size elementes with lowe
 ## vibrancy.pxg
 change vibrancy of image
 adapted from zoidbergs code https://www.interactiveshaderformat.com/sketches/282
+
+## rgbHalftone.pxg
+created halftone pattern
+adapted from msfeldsteins shader https://www.interactiveshaderformat.com/sketches/20
