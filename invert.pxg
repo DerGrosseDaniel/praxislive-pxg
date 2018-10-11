@@ -1,0 +1,23 @@
+#%praxis.version 4.1.0
+@ ./invert video:analysis:difference {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @In(1) PImage in1;
+    @P(1) @Type.Boolean(def = false)
+    Property bypass;
+
+    
+    @Override
+    public void draw() \{
+        if(!bypass.getBoolean())\{
+            background(255);
+            blendMode(DIFFERENCE);
+        \}
+        image(in1,0,0);
+        release(in1);
+    \}
+    
+"
+}

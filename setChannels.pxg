@@ -1,0 +1,179 @@
+#%praxis.version 4.1.0
+@ ./setChannels video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  #%graph.minimized true
+  .code "
+
+     @P(1) @Type.Boolean(def = true) boolean redToRed;
+     @P(2) @Type.Boolean(def = false) boolean greenToRed;
+     @P(3) @Type.Boolean(def = false) boolean blueToRed;
+     @P(4) @Type.Boolean(def = false) boolean alphaToRed;
+     
+     @P(5) @Type.Boolean(def = false) boolean redToGreen;
+     @P(6) @Type.Boolean(def = true) boolean greenToGreen;
+     @P(7) @Type.Boolean(def = false) boolean blueToGreen;
+     @P(8) @Type.Boolean(def = false) boolean alphaToGreen;
+     
+     @P(9) @Type.Boolean(def = false) boolean redToBlue;
+     @P(10) @Type.Boolean(def = false) boolean greenToBlue;
+     @P(11) @Type.Boolean(def = true) boolean blueToBlue;
+     @P(12) @Type.Boolean(def = false) boolean alphaToBlue;
+     
+     @P(13) @Type.Boolean(def = false) boolean redToAlpha;
+     @P(14) @Type.Boolean(def = false) boolean greenToAlpha;
+     @P(15) @Type.Boolean(def = false) boolean blueToAlpha;
+     @P(16) @Type.Boolean(def = true) boolean alphaToAlpha;
+    
+    void updateUniforms() \{
+         shader.set(\"redToRed\", redToRed);
+         shader.set(\"greenToRed\", greenToRed);
+         shader.set(\"blueToRed\", blueToRed);
+         shader.set(\"alphaToRed\", alphaToRed);
+         shader.set(\"redToGreen\", redToGreen);
+         shader.set(\"greenToGreen\", greenToGreen);
+         shader.set(\"blueToGreen\", blueToGreen);
+         shader.set(\"alphaToGreen\", alphaToGreen);
+         shader.set(\"redToBlue\",redToBlue);
+         shader.set(\"greenToBlue\", greenToBlue);
+         shader.set(\"blueToBlue\", blueToBlue);
+         shader.set(\"alphaToBlue\", alphaToBlue);
+         shader.set(\"redToAlpha\", redToAlpha);
+         shader.set(\"greenToAlpha\", greenToAlpha);
+         shader.set(\"blueToAlpha\", blueToAlpha);
+         shader.set(\"alphaToAlpha\", alphaToAlpha);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+uniform bool redToRed;
+uniform bool greenToRed;
+uniform bool blueToRed;
+uniform bool alphaToRed;
+     
+uniform bool redToGreen;
+uniform bool greenToGreen;
+uniform bool blueToGreen;
+uniform bool alphaToGreen;
+     
+uniform bool redToBlue;
+uniform bool greenToBlue;
+uniform bool blueToBlue;
+uniform bool alphaToBlue;
+     
+uniform bool redToAlpha;
+uniform bool greenToAlpha;
+uniform bool blueToAlpha;
+uniform bool alphaToAlpha;
+
+void main() \{
+
+    float red = 0;
+    if(redToRed == true)\{
+        red += texture2D(texture, vertTexCoord.st).r;
+    \}
+    if(greenToRed == true)\{
+        red += texture2D(texture, vertTexCoord.st).g;
+    \}
+    if(blueToRed == true)\{
+        red += texture2D(texture, vertTexCoord.st).b;
+    \}
+    if(alphaToRed == true)\{
+        red += texture2D(texture, vertTexCoord.st).g;
+    \}
+
+    float green = 0;
+    if(redToGreen == true)\{
+        green += texture2D(texture, vertTexCoord.st).r;
+    \}
+    if(greenToGreen == true)\{
+        green += texture2D(texture, vertTexCoord.st).g;
+    \}
+    if(blueToGreen == true)\{
+        green += texture2D(texture, vertTexCoord.st).b;
+    \}
+    if(alphaToGreen == true)\{
+        green += texture2D(texture, vertTexCoord.st).g;
+    \}
+
+    float blue = 0;
+    if(redToBlue == true)\{
+        blue += texture2D(texture, vertTexCoord.st).r;
+    \}
+    if(greenToBlue == true)\{
+        blue += texture2D(texture, vertTexCoord.st).g;
+    \}
+    if(blueToBlue == true)\{
+        blue += texture2D(texture, vertTexCoord.st).b;
+    \}
+    if(alphaToBlue == true)\{
+        blue += texture2D(texture, vertTexCoord.st).g;
+    \}
+
+    float alpha = 0;
+    if(redToAlpha == true)\{
+        alpha += texture2D(texture, vertTexCoord.st).r;
+    \}
+    if(greenToAlpha == true)\{
+        alpha += texture2D(texture, vertTexCoord.st).g;
+    \}
+    if(blueToAlpha == true)\{
+        alpha += texture2D(texture, vertTexCoord.st).b;
+    \}
+    if(alphaToAlpha == true)\{
+        alpha += texture2D(texture, vertTexCoord.st).g;
+    \}
+
+
+
+    //float red = texture2D(texture, vertTexCoord.st).r*redToRed + texture2D(texture, vertTexCoord.st).g*greenToRed  + texture2D(texture, vertTexCoord.st).b*blueToRed + texture2D(texture, vertTexCoord.st).a*alphaToRed ;
+    //float green = texture2D(texture, vertTexCoord.st).r*redToGreen + texture2D(texture, vertTexCoord.st).g*greenToGreen  + texture2D(texture, vertTexCoord.st).b*blueToGreen + texture2D(texture, vertTexCoord.st).a*alphaToGreen ;
+    //float blue = texture2D(texture, vertTexCoord.st).r*redToBlue + texture2D(texture, vertTexCoord.st).g*greenToBlue  + texture2D(texture, vertTexCoord.st).b*blueToBlue + texture2D(texture, vertTexCoord.st).a*alphaToBlue ;
+    //float alpha = texture2D(texture, vertTexCoord.st).r*redToAlpha + texture2D(texture, vertTexCoord.st).g*greenToAlpha  + texture2D(texture, vertTexCoord.st).b*blueToAlpha + texture2D(texture, vertTexCoord.st).a*alphaToAlpha ;
+    
+    gl_FragColor = vec4(red,green,blue,alpha);
+\}"
+  .red-to-red false
+  .green-to-green false
+  .blue-to-blue false
+  .alpha-to-alpha false
+}

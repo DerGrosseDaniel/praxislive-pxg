@@ -1,0 +1,94 @@
+#%praxis.version 4.1.0
+@ ./LumaKey video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+     @P(1) @Type.Number(min = 0, max = 1, def = 1) float thresUp;
+     @P(2) @Type.Number(min = 0, max = 1, def = 0) float thresDown;
+     @P(3) @Type.Number(min = 0, max = 1, def = 0.05) float smoothness;
+     @P(4) @Type.Boolean boolean showMatte;
+     
+     
+    
+    void updateUniforms() \{
+//         shader.set(\"u1\", u1);
+           shader.set(\"thresUp\", thresUp);
+           shader.set(\"thresDown\", thresDown);
+           shader.set(\"smoothness\", smoothness);
+           shader.set(\"showMatte\", showMatte);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform vec2 texOffset;
+uniform float thresUp;
+uniform float thresDown;
+uniform float smoothness;
+
+uniform bool showMatte;
+
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+
+ 
+  gl_FragColor = texture2D(texture, vertTexCoord.st) * vertColor;
+
+    //perceived brightness of pixel https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+   float brightness = 0.299*gl_FragColor.r + 0.587*gl_FragColor.g + 0.114*gl_FragColor.b;
+  
+    //lower threshold
+    float alpha = smoothstep(thresDown-smoothness,thresDown,brightness);
+
+    //brighter threashold
+    alpha = alpha * smoothstep(1-(thresUp+smoothness),1-thresUp, 1-brightness);
+    
+    if(showMatte == false)\{
+        gl_FragColor = vec4(gl_FragColor.rgb, alpha);
+    \}else\{
+        gl_FragColor = vec4(vec3(alpha), 1);
+    \}
+  
+\}"
+  .thres-up 0.9824561403508771
+  .thres-down 0.16666666666666666
+  .smoothness 0.03508771929824561
+  .show-matte true
+}
