@@ -38,3 +38,6 @@ generates 3 fully customizable circles with following options:
   * `c-x-circle`if checked it links width and heigh of circle, if not checked both can be edited independent
   * `c-x-mix-y-achse` mirrors circle horizontan and/or vertically
   * the rest should be obvious :)
+  
+* `Adder10x.pxg`
+add 10 video layers. Each is individual switchable.
