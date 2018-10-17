@@ -28,3 +28,13 @@ You can switch channels to others with this patch. For example if "red-to-red" i
 
 * `color.pxg`
 generates color either with rgb values or hsv values.
+
+* `randomCircles.pxg`
+generates random circles on Screen
+
+* `threeCircles.pxg`
+generates 3 fully customizable circles with following options:
+  * `c-x-edit`if theis is checked, then you can set position of circle in the video via mouse click
+  * `c-x-circle`if checked it links width and heigh of circle, if not checked both can be edited independent
+  * `c-x-mix-y-achse` mirrors circle horizontan and/or vertically
+  * the rest should be obvious :)
