@@ -1,0 +1,169 @@
+#%praxis.version 4.1.0
+@ ./threeCircles video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  #%graph.minimized true
+  .code "import java.awt.event.KeyEvent;
+
+
+    @P(1) @Type.Integer(def = 1111111) int C1111111111111111111111111111111111111111;
+    @P(2) @Type.Boolean(def = false) boolean C1Edit;
+    @P(3) @Type.Integer(def = 50) int C1X;
+    @P(4) @Type.Integer(def = 50) int C1Y;
+    @P(5) @Type.Integer(def = 50) int C1RX;
+    @P(6) @Type.Integer(def = 50) int C1RY;
+    @P(7) @Type.Boolean(def = false) boolean C1Circle;
+    @P(8) @Type.Integer(min = 0, max = 255, def = 255) int C1Fill;
+    @P(9) @Type.Boolean(def = false) boolean C1MirHAchse;
+    @P(10) @Type.Boolean(def = false) boolean C1MirVAchse;
+    @P(11) @Type.Boolean(def = true) boolean C1Enable;
+    
+    @P(12) @Type.Integer(def = 2222222) int C2222222222222222222222222222222222222222;
+    @P(13) @Type.Boolean(def = false) boolean C2Edit;
+    @P(14) @Type.Integer(def = 50) int C2X;
+    @P(15) @Type.Integer(def = 50) int C2Y;
+    @P(16) @Type.Integer(def = 50) int C2RX;
+    @P(17) @Type.Integer(def = 50) int C2RY;
+    @P(18) @Type.Boolean(def = false) boolean C2Circle;
+    @P(19) @Type.Integer(min = 0, max = 255, def = 255) int C2Fill;
+    @P(20) @Type.Boolean(def = false) boolean C2MirHAchse;
+    @P(21) @Type.Boolean(def = false) boolean C2MirVAchse;
+    @P(22) @Type.Boolean(def = true) boolean C2Enable;
+    
+    
+    @P(23) @Type.Integer(def = 3333333) int C3333333333333333333333333333333333333333;
+    @P(24) @Type.Boolean(def = false) boolean C3Edit;
+    @P(25) @Type.Integer(def = 50) int C3X;
+    @P(26) @Type.Integer(def = 50) int C3Y;
+    @P(27) @Type.Integer(def = 50) int C3RX;
+    @P(28) @Type.Integer(def = 50) int C3RY;
+    @P(29) @Type.Boolean(def = false) boolean C3Circle;
+    @P(30) @Type.Integer(min = 0, max = 255, def = 255) int C3Fill;
+    @P(31) @Type.Boolean(def = false) boolean C3MirHAchse;
+    @P(32) @Type.Boolean(def = false) boolean C3MirVAchse;
+    @P(33) @Type.Boolean(def = true) boolean C3Enable;
+    
+    void ellipseMirror(int x, int y, int rx, int ry, int fill, boolean mirHAchse, boolean mirVAchse)\{
+        fill(fill);
+        noStroke();
+        ellipse(x, y, rx, ry);
+        if(mirHAchse)\{
+            ellipse(x, height-y, rx, ry);
+        \}
+        if(mirVAchse)\{
+            ellipse(width-x, y, rx, ry);
+        \}
+        if(mirHAchse && mirVAchse)\{
+            ellipse(width-x, height-y, rx, ry);
+        \}
+    \}
+    
+    
+    @Override
+    public void setup() \{
+    \}
+
+    @Override
+    public void draw() \{
+        
+        if(keyPressed)\{
+            if(C1Edit)\{
+                if(keyCode == KeyEvent.VK_UP)
+                    C1RY*=1.2;
+                if(keyCode == KeyEvent.VK_DOWN)
+                    C1RY/=1.2;
+                if(keyCode == KeyEvent.VK_LEFT)
+                    C1RX/=1.2;
+                if(keyCode == KeyEvent.VK_RIGHT)
+                    C1RX*=1.2;
+            \}
+            if(C2Edit)\{
+                if(keyCode == KeyEvent.VK_UP)
+                    C2RY*=1.2;
+                if(keyCode == KeyEvent.VK_DOWN)
+                    C2RY/=1.2;
+                if(keyCode == KeyEvent.VK_LEFT)
+                    C2RX/=1.2;
+                if(keyCode == KeyEvent.VK_RIGHT)
+                    C2RX*=1.2;
+            \}
+            if(C3Edit)\{
+                if(keyCode == KeyEvent.VK_UP)
+                    C3RY*=1.2;
+                if(keyCode == KeyEvent.VK_DOWN)
+                    C3RY/=1.2;
+                if(keyCode == KeyEvent.VK_LEFT)
+                    C3RX/=1.2;
+                if(keyCode == KeyEvent.VK_RIGHT)
+                    C3RX*=1.2;
+            \}
+        \}
+        
+        if(C1Circle)\{
+            int newRad = (C1RX + C1RY)/2;
+            C1RX = newRad;
+            C1RY = newRad;
+        \}
+        
+        if(C2Circle)\{
+            int newRad = (C2RX + C2RY)/2;
+            C2RX = newRad;
+            C2RY = newRad;
+        \}
+        
+        if(C3Circle)\{
+            int newRad = (C3RX + C3RY)/2;
+            C3RX = newRad;
+            C3RY = newRad;
+        \}
+        
+        if(mousePressed)\{ //mouse is clicked
+            if(C1Edit)\{
+                C1X = mouseX;
+                C1Y = mouseY;
+            \}
+            if(C2Edit)\{
+                C2X = mouseX;
+                C2Y = mouseY;
+            \}
+            if(C3Edit)\{
+                C3X = mouseX;
+                C3Y = mouseY;
+            \}
+        \}
+        
+        background(0);
+        if(C1Enable)
+            ellipseMirror(C1X, C1Y, C1RX, C1RY, C1Fill, C1MirHAchse, C1MirVAchse);
+        if(C2Enable)
+            ellipseMirror(C2X, C2Y, C2RX, C2RY, C2Fill, C2MirHAchse, C2MirVAchse);
+        if(C3Enable)
+            ellipseMirror(C3X, C3Y, C3RX, C3RY, C3Fill, C3MirHAchse, C3MirVAchse);
+        
+        if(C1Edit || C2Edit || C3Edit)\{
+            fill(127);
+            rectMode(CENTER);
+            rect(mouseX,mouseY,10,10);
+        \}
+    \}
+"
+  .c-1111111111111111111111111111111111111111 11111111
+  .c-1-x 303
+  .c-1-y 474
+  .c-1-rx 426
+  .c-1-ry 426
+  .c-1-circle true
+  .c-1-mir-v-achse true
+  .c-2-x 700
+  .c-2-y 697
+  .c-2-rx 297
+  .c-2-ry 297
+  .c-2-circle true
+  .c-2-fill 128
+  .c-2-mir-v-achse true
+  .c-3-x 965
+  .c-3-y 990
+  .c-3-rx 88
+  .c-3-ry 2372
+  .c-3-fill 100
+}
