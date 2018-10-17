@@ -1,0 +1,64 @@
+#%praxis.version 4.1.0
+@ ./Adder10x video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  #%graph.minimized true
+  .code "
+
+    @In(1) PImage in1;
+    @In(2) PImage in2;
+    @In(3) PImage in3;
+    @In(4) PImage in4;
+    @In(5) PImage in5;
+    @In(6) PImage in6;
+    @In(7) PImage in7;
+    @In(8) PImage in8;
+    @In(9) PImage in9;
+    @In(10) PImage in10;
+    
+    
+    @P(1) @Type.Boolean(def = false) boolean AddInput1;
+    @P(2) @Type.Boolean(def = false) boolean AddInput2;
+    @P(3) @Type.Boolean(def = false) boolean AddInput3;
+    @P(4) @Type.Boolean(def = false) boolean AddInput4;
+    @P(5) @Type.Boolean(def = false) boolean AddInput5;
+    @P(6) @Type.Boolean(def = false) boolean AddInput6;
+    @P(7) @Type.Boolean(def = false) boolean AddInput7;
+    @P(8) @Type.Boolean(def = false) boolean AddInput8;
+    @P(9) @Type.Boolean(def = false) boolean AddInput9;
+    @P(10) @Type.Boolean(def = false) boolean AddInput10;
+    
+    
+    @Override
+    public void setup() \{
+    \}
+    
+    @Override
+    public void draw() \{
+        //background(0);
+        blendMode(ADD);
+        if(AddInput1)
+            image(in1, 0, 0);
+        if(AddInput2)
+            image(in2, 0, 0);
+        if(AddInput3)
+            image(in3, 0, 0);
+        if(AddInput4)
+            image(in4, 0, 0);
+        if(AddInput5)
+            image(in5, 0, 0);
+        if(AddInput6)
+            image(in6, 0, 0);
+        if(AddInput7)
+            image(in7, 0, 0);
+        if(AddInput8)
+            image(in8, 0, 0);
+        if(AddInput9)
+            image(in9, 0, 0);
+        if(AddInput10)
+            image(in10, 0, 0);
+    \}
+    
+"
+  .add-input-10 true
+}
