@@ -60,3 +60,6 @@ Pixelates image. To speedup processing only one pixel of the source image is sam
 
 * `gain.pxg`
 This is a video gain. You can increase and decrease brightness of video. Very handy for feedbackloops to lessen impact. Really nice with edge detection.
+
+* `valPlot.pxg`
+Plots inputvalue as white line on black background. Very good for debugging.
