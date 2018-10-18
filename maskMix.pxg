@@ -1,0 +1,85 @@
+#%praxis.version 4.1.0
+@ ./maskMix video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+     @P(1) @Type.Boolean boolean switchColors;
+     @P(2) @Type.Boolean boolean maskOnly;
+     
+    
+    void updateUniforms() \{
+         shader.set(\"switchColors\", switchColors);
+         shader.set(\"mask\",mask);
+         shader.set(\"white\",white);
+         shader.set(\"black\",black);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage mask;
+    @In(1)
+    PImage white;
+    @In(2)
+    PImage black;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if(maskOnly)\{
+            image(mask,0,0);
+            return;
+        \}
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(mask, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D mask;
+uniform sampler2D white;
+uniform sampler2D black;
+
+uniform bool switchColors;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+  vec2 st = vertTexCoord.st;
+  vec4 colorWhite = texture2D(white,st);
+  vec4 colorBlack = texture2D(black,st);
+  //perceived brightness of pixel https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+  vec4 colorMask = texture2D(mask,st);
+  float mix = 0.299*colorMask.x + 0.587*colorMask.y + 0.114*colorMask.z;
+
+  if(switchColors == true)\{
+    mix = 1.0-mix;
+  \}
+  
+  gl_FragColor = vec4(mix(colorBlack,colorWhite,mix).xyz,1.0);
+\}"
+}
