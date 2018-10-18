@@ -41,3 +41,6 @@ generates 3 fully customizable circles with following options:
   
 * `Adder10x.pxg`
 add 10 video layers. Each is individual switchable.
+
+* `maskMix.pxg`
+Mixes two input images according to a third mask image. If the mask pixel perceived brightness is 100% the white image will be choosen, if it is 0% the black image. Grey pixel values are mixed accordingly.
