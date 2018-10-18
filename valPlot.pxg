@@ -1,0 +1,41 @@
+#%praxis.version 4.1.0
+@ ./valPlot video:analysis:frame-delay {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) double val;
+    @P(2) @Type.Integer(min=1, max = 100, def = 1) int speed;
+    @P(3) @Type.Number(def = 0) double minimum;
+    @P(4) @Type.Number(def = 100)double maximum;
+    
+    @OffScreen PGraphics lastFrame;
+    
+    double pos = -1;
+    double lastVal;
+    
+    @Override
+    public void draw() \{
+        //copy(previous);
+        //previous.copy(in);
+        //release(in);
+        pos += speed;
+        lastFrame.strokeWeight(3);
+        lastFrame.stroke(255);
+        lastFrame.line(pos-speed, map(lastVal,minimum,maximum,height,0), pos, map(val,minimum,maximum,height,0));
+        if (pos >= width)\{
+            pos = 0;
+            lastFrame.blendMode(SUBTRACT);
+            lastFrame.background(0.5);
+            lastFrame.blendMode(BLEND);
+        \}
+        
+        copy(lastFrame);
+        lastVal = val;
+    \}
+    
+"
+  .val 0.020740248758205806
+  .speed 3
+  .maximum 1
+}
