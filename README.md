@@ -47,3 +47,6 @@ Mixes two input images according to a third mask image. If the mask pixel percei
 
 * `bitDepth.pxg`
 Reduces the number of possible colors by rounding the color to the nearest color.
+
+* `pixelate.pxg`
+Pixelates image. To speedup processing only one pixel of the source image is sampled per bigger pixel, so you ironically may not get the disired resolution out of this low resolution filter.
