@@ -1,0 +1,62 @@
+#%praxis.version 4.1.0
+@ ./pwm core:custom {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) @Type.Number(min = 0, max = 0.4, def = 0.01) double speed;
+    @P(2) @Type.Number double minimum; //off
+    @P(3) @Type.Number double maximum; //on
+    @P(4) @Type.Number(min = 0, max = 1, def = 0.25) double dutyCyle;
+    @P(5) @Type.Number(min = 0, max = 1, def = 0.2) double smooth;
+    
+    @Out(1) Output out;
+    
+    double pos = 0;
+    
+    @Override
+    public void init() \{
+        pos = 0;
+    \}
+
+    
+    @Override
+    public void update() \{
+        pos = (pos+speed)%1;
+        double transition = Math.min(dutyCyle,(1-dutyCyle))*smooth;
+        double val = 0;
+        
+        if (pos <= (1-dutyCyle)-transition)\{ //signal is off
+            val = 0;
+        \}
+        
+        if (  (pos > ((1-dutyCyle)-transition)) && (pos < (1-dutyCyle)) )\{ //signal is in transition to on
+            double x = pos - ((1-dutyCyle)-transition);
+            x /= transition;
+            val = Math.sin(x*PI-0.5*PI);; //transition from -1 to 1
+            val = (val+1)/2.0;
+        \}
+        
+        
+        if ((pos >= (1-dutyCyle) && (pos <= (1-transition))) )\{ //signal is on
+            val = 1;
+        \}
+        
+        if ( pos > (1-transition) )\{ //signal is in transition to off
+            double x = pos - (1-transition);
+            x /= transition;
+            val = Math.sin(x*PI+0.5*PI); //transition from 1 to -1
+            val = (val+1)/2.0;
+        \}
+        
+        val = map(val,0,1,minimum,maximum);
+        out.send(val);
+    \}
+    
+"
+  .speed 0.023809523809523808
+  .minimum 0.05
+  .maximum 0.6
+  .duty-cyle 0.30952380952380953
+  .smooth 0.9880952380952381
+}
