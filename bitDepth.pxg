@@ -1,0 +1,64 @@
+#%praxis.version 4.1.0
+@ ./bitDepth video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+     @P(1) @Type.Integer(min = 2, max=255, def = 32) int levels;
+    
+    void updateUniforms() \{
+         shader.set(\"levels\", levels);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform int levels;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+  vec4 color = texture2D(texture, vertTexCoord.st);
+  color.x = float(int(color.x*levels))/float(levels);
+  color.y = float(int(color.y*levels))/float(levels);
+  color.z = float(int(color.z*levels))/float(levels);
+  gl_FragColor = vec4(color.xyz,1.0);
+\}"
+  .levels 15
+}
