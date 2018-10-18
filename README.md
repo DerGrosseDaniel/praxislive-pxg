@@ -1,6 +1,13 @@
 # praxislive-pxg
 Here are my custom pxgs and nice ones from other people
 
+## core patches
+
+* `sin.pxg`
+Gnerates values on sinus curve. Speed is adjustable, as are minimum and maximum.
+
+## video patches
+
 * `colSeparator.pxg`
 seperates rgb-channels to the left and right, you have amount and scale as input. 1 amount is 1% leftright and scale is multiplied by it.
 
@@ -50,3 +57,6 @@ Reduces the number of possible colors by rounding the color to the nearest color
 
 * `pixelate.pxg`
 Pixelates image. To speedup processing only one pixel of the source image is sampled per bigger pixel, so you ironically may not get the disired resolution out of this low resolution filter.
+
+* `gain.pxg`
+This is a video gain. You can increase and decrease brightness of video. Very handy for feedbackloops to lessen impact. Really nice with edge detection.
