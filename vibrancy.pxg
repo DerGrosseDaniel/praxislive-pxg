@@ -4,7 +4,7 @@
   #%graph.y 0
   .code "
 
-     @P(1) @Type.Number(def = 1)
+     @P(1) @Type.Number(min=-5, max = 5, def = 0)
      double vibrancy;
     
     void updateUniforms() \{
