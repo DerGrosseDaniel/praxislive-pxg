@@ -6,6 +6,9 @@ Here are my custom pxgs and nice ones from other people
 * `sin.pxg`
 Gnerates values on sinus curve. Speed is adjustable, as are minimum and maximum.
 
+* `pwm.pxg`
+Pulses value with a given duty cycle.
+
 ## video patches
 
 * `colSeparator.pxg`
