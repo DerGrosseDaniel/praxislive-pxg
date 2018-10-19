@@ -1,0 +1,189 @@
+#%praxis.version 4.1.0
+@ ./patterner video:custom {
+  #%graph.x 0
+  #%graph.y 0
+  #%graph.minimized true
+  .code "
+
+    enum Mode \{Normal, Add, Difference\}
+    
+    @In(1) PImage in;
+    
+    @P(1) @Type.Number(min = 0, max = 1, def =0) double offsetX;
+    @P(2) @Type.Number(min = 0, max = 1, def =0) double offsetY;
+    @P(3) @Type.Number(min = 0, max = 1, def =0) double overlapX;
+    @P(4) @Type.Number(min = 0, max = 1, def =0) double overlapY;
+    @P(5) Mode mode;
+    @P(6) @Type.Boolean(def = false) boolean linkScaling;
+    @P(7) @Type.Number(min = 0.01, max = 5, def =1) double scaleX;
+    @P(8) @Type.Number(min = 0.01, max = 5, def =1) double scaleY;
+    @P(9) @Type.Boolean(def = false) boolean MirrHAxes;
+    @P(10) @Type.Boolean(def = false) boolean MirrVAxes;
+    
+    //@P(11) @Type.Number(min = 0.01, max = 6.283184, def =3.141592) double rotation;
+    
+    
+    @P(12) @Type.Boolean(def = false) boolean CropToSquare;
+    @P(13) @Type.Boolean(def = false) boolean bypass;
+
+    
+    @OffScreen PGraphics inScaled;
+    @OffScreen PGraphics imgHAxesInverted;
+    @OffScreen PGraphics imgVAxesInverted;
+    @OffScreen PGraphics imgMirrBoth;
+    
+    @Override
+    public void setup() \{
+
+    \}
+    
+    @Override
+    public void draw() \{
+        
+        if(bypass)\{
+            image(in,0,0);
+            return;
+        \}
+        
+        if(linkScaling)\{
+            scaleY = scaleX;
+        \}
+        
+        double squareOffset;
+        if(!CropToSquare)
+            squareOffset=0;
+        else
+            squareOffset = (width-height)/2;
+            //squareOffset =((1.0*width/height)-1)/2.0*width;
+
+            
+        inScaled.beginDraw();
+        if(!CropToSquare)\{
+            inScaled.scale(1, 1);
+        \} else \{
+            inScaled.scale(1.0*width/height, 1.0);
+        \}
+        inScaled.image(in, -squareOffset, 0);
+        inScaled.endDraw();
+        
+        imgHAxesInverted.beginDraw();
+        if(!CropToSquare)\{
+            imgHAxesInverted.scale(1, -1);
+        \} else \{
+            imgHAxesInverted.scale(1.0*width/height, -1.0);
+        \}
+        imgHAxesInverted.image(in, -squareOffset, -height);
+        imgHAxesInverted.endDraw();
+        
+        imgVAxesInverted.beginDraw();
+        if(!CropToSquare)\{
+            imgVAxesInverted.scale(-1, 1);
+        \} else \{
+            imgVAxesInverted.scale(-1.0*width/height, 1.0);
+        \}
+        imgVAxesInverted.image(in, -width + squareOffset, 0);
+        imgVAxesInverted.endDraw();
+        
+        imgMirrBoth.beginDraw();
+        if(!CropToSquare)\{
+            imgMirrBoth.scale(-1, -1);
+        \} else \{
+            imgMirrBoth.scale(-1.0*width/height, -1.0);
+        \}
+        imgMirrBoth.image(in, -width + squareOffset, -height);
+        imgMirrBoth.endDraw();
+        
+        
+        translate(width/2+offsetX*width*scaleX, height/2+offsetY*height*scaleY);
+        
+        if(!CropToSquare)\{
+            scale(scaleX,scaleY);
+        \} else \{
+            scale(scaleX*height/width,scaleY);
+        \}
+        
+        
+        
+        
+        
+        for(int i = 0; i <= Math.ceil(2/scaleX);i++)\{
+            for(int j = 0; j<= Math.ceil(2/scaleY);j++)\{
+                if(!MirrHAxes && !MirrVAxes)\{
+                    image(inScaled, -width/2+i*width, -height/2+j*height);
+                    image(inScaled, -width/2+i*width, -height/2-j*height);
+                    image(inScaled, -width/2-i*width, -height/2+j*height);
+                    image(inScaled, -width/2-i*width, -height/2-j*height);
+                \}
+                
+                if(!MirrHAxes && MirrVAxes)\{
+                    if(i% 2 == 0)\{
+                        image(inScaled, -width/2+i*width, -height/2+j*height);
+                        image(inScaled, -width/2+i*width, -height/2-j*height);
+                        image(inScaled, -width/2-i*width, -height/2+j*height);
+                        image(inScaled, -width/2-i*width, -height/2-j*height);
+                    \}
+                    if(i%2 == 1)\{
+                        image(imgVAxesInverted, -width/2+i*width, -height/2+j*height);
+                        image(imgVAxesInverted, -width/2+i*width, -height/2-j*height);
+                        image(imgVAxesInverted, -width/2-i*width, -height/2+j*height);
+                        image(imgVAxesInverted, -width/2-i*width, -height/2-j*height);
+                    \}
+                \}
+                
+                if(MirrHAxes && !MirrVAxes)\{
+                    if(j%2==0)\{
+                        image(inScaled, -width/2+i*width, -height/2+j*height);
+                        image(inScaled, -width/2+i*width, -height/2-j*height);
+                        image(inScaled, -width/2-i*width, -height/2+j*height);
+                        image(inScaled, -width/2-i*width, -height/2-j*height);
+                    \}
+                    
+                    if(j%2==1)\{
+                        image(imgHAxesInverted, -width/2+i*width, -height/2+j*height);
+                        image(imgHAxesInverted, -width/2+i*width, -height/2-j*height);
+                        image(imgHAxesInverted, -width/2-i*width, -height/2+j*height);
+                        image(imgHAxesInverted, -width/2-i*width, -height/2-j*height);
+                    \}
+
+                \}
+                
+                if(MirrHAxes && MirrVAxes)\{
+                    if((i% 2 == 0) && (j%2==0))\{
+                        image(inScaled, -width/2+i*width, -height/2+j*height);
+                        image(inScaled, -width/2+i*width, -height/2-j*height);
+                        image(inScaled, -width/2-i*width, -height/2+j*height);
+                        image(inScaled, -width/2-i*width, -height/2-j*height);
+                    \}
+                    if((i%2 == 1) && (j%2==0))\{
+                        image(imgVAxesInverted, -width/2+i*width, -height/2+j*height);
+                        image(imgVAxesInverted, -width/2+i*width, -height/2-j*height);
+                        image(imgVAxesInverted, -width/2-i*width, -height/2+j*height);
+                        image(imgVAxesInverted, -width/2-i*width, -height/2-j*height);
+                    \}
+                    
+                    if((i%2 == 0) && (j%2==1))\{
+                        image(imgHAxesInverted, -width/2+i*width, -height/2+j*height);
+                        image(imgHAxesInverted, -width/2+i*width, -height/2-j*height);
+                        image(imgHAxesInverted, -width/2-i*width, -height/2+j*height);
+                        image(imgHAxesInverted, -width/2-i*width, -height/2-j*height);
+                    \}
+                    
+                    if((i%2 == 1) && (j%2==1))\{
+                        image(imgMirrBoth, -width/2+i*width, -height/2+j*height);
+                        image(imgMirrBoth, -width/2+i*width, -height/2-j*height);
+                        image(imgMirrBoth, -width/2-i*width, -height/2+j*height);
+                        image(imgMirrBoth, -width/2-i*width, -height/2-j*height);
+                    \}
+                \}
+                
+            \}
+        \}
+
+    \}
+    
+"
+  .offset-x 0.5
+  .scale-x 0.5
+  .mirr-h-axes true
+  .mirr-v-axes true
+}
