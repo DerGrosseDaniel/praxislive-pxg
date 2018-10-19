@@ -9,6 +9,9 @@ Gnerates values on sinus curve. Speed is adjustable, as are minimum and maximum.
 * `pwm.pxg`
 Pulses value with a given duty cycle.
 
+* `frame.pxg`
+Outputs current frame number. Also has five more output which are the frame number multiplied by the scale. Speed can also be changed. Pause and reset are also implemented.
+
 ## video patches
 
 * `colSeparator.pxg`
@@ -78,3 +81,6 @@ Flips image in left right and/or top down direction.
 
 * `mirror.pxg`
 Mirrors image. If you enable `left` the left haf of the image will be copies to the right half. `right`, `up` and `down` word the same way. 
+
+* `perlin.pxg`
+Generated perlin noise. x and y of pixel Position are fed into is. So are the offsets `x`, `y` and `z`. If you want to pan your noise left to right chande `x`, up and down change `y` and if you want the noise to change gradually, then change `z` slowly. You can also scale the size of the noise.
