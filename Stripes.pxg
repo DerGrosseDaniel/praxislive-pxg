@@ -1,0 +1,37 @@
+#%praxis.version 4.1.0
+@ ./Stripes video:custom {
+  #%graph.x 0
+  #%graph.y 0
+  #%graph.minimized true
+  .code "import static processing.core.PConstants.CENTER;
+
+
+    @P(1) @Type.Number(min = 0.01, max = 1, def =0.1) double stripWidth;
+    @P(2) @Type.Number(min = 0, max = Math.PI, def = 0) double rotation;
+    @P(3) @Type.Number(min = 0, max = 1) double stripOffset;
+    
+
+    @Override
+    public void setup() \{
+        smooth();
+    \}
+
+    @Override
+    public void draw() \{
+        background(0);
+        translate(width/2, height/2);
+        rotate(rotation);
+        
+        for(float i = 0; i < 100; i+= 2*stripWidth)\{
+            noStroke();
+            fill(255);
+            rect(-width,(i+stripWidth/2+stripOffset*stripWidth*2)*height,width*3,height*stripWidth);
+            rect(-width,(-i-1.5*stripWidth+stripOffset*stripWidth*2)*height,width*3,height*stripWidth);
+
+        \}
+    \}
+"
+  .strip-width 0.27728445377279004
+  .rotation 2.4122943590064483
+  .strip-offset 0.8771929824561403
+}
