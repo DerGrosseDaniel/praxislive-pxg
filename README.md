@@ -72,3 +72,9 @@ Creates Patterns out of input image. I use image funsctions and not GLSL shader.
 
 * `stripes.pxg`
 Creates stripes. Should be rewritten as shader, but works fine.
+
+* `flip.pxg`
+Flips image in left right and/or top down direction.
+
+* `mirror.pxg`
+Mirrors image. If you enable `left` the left haf of the image will be copies to the right half. `right`, `up` and `down` word the same way. 
