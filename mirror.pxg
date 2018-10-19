@@ -1,0 +1,117 @@
+#%praxis.version 4.1.0
+@ ./mirror video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) @OnChange(\"disableRight\") boolean left;
+    @P(2) @OnChange(\"disableLeft\") boolean right;
+    @P(3) @OnChange(\"disableDown\") boolean up;
+    @P(4) @OnChange(\"disableUp\") boolean down;
+    
+    void disableRight()\{
+        if(left)
+            right = false;
+    \}
+    
+    void disableLeft()\{
+        if(right)
+            left = false;
+    \}
+    
+    void disableDown()\{
+        if(up)
+            down = false;
+    \}
+    
+    void disableUp()\{
+        if(down)
+            up = false;
+    \}
+    
+    void updateUniforms() \{
+         shader.set(\"left\", left);
+         shader.set(\"right\", right);
+         shader.set(\"up\", up);
+         shader.set(\"down\", down);
+         
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform bool left;
+uniform bool right;
+uniform bool up;
+uniform bool down;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+  vec2 st = vertTexCoord.st;
+
+    if(left == true)\{
+        if(st.x > 0.5)\{
+            st.x = 0.5-(st.x-0.5);
+        \}
+    \}
+
+    if(right == true)\{
+        if(st.x < 0.5)\{
+            st.x = 1.0-st.x;
+        \}
+    \}
+
+    if(up == true)\{
+        if(st.y < 0.5)\{
+            st.y = 1.0-st.y;
+        \}
+    \}
+
+    if(down == true)\{
+        if(st.y > 0.5)\{
+            st.y = 0.5-(st.y-0.5);
+        \}
+    \}
+
+  gl_FragColor = texture2D(texture, st) * vertColor;
+\}"
+  .right true
+  .up true
+}

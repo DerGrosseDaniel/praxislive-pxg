@@ -1,0 +1,72 @@
+#%praxis.version 4.1.0
+@ ./flip video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) boolean leftright;
+    @P(2) boolean topdown;
+    
+    void updateUniforms() \{
+         shader.set(\"leftright\", leftright);
+         shader.set(\"topdown\", topdown);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform bool leftright;
+uniform bool topdown;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+  vec2 st = vertTexCoord.st;
+
+    if(leftright == true)\{
+        st.x = 1.0-st.x;
+    \}
+
+    if(topdown == true)\{
+        st.y = 1.0-st.y;
+    \}
+
+  gl_FragColor = texture2D(texture, st) * vertColor;
+\}"
+}
