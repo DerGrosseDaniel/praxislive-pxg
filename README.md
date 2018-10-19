@@ -66,3 +66,6 @@ This is a video gain. You can increase and decrease brightness of video. Very ha
 
 * `valPlot.pxg`
 Plots inputvalue as white line on black background. Very good for debugging.
+
+* `patterner.pxg`
+Creates Patterns out of input image. I use image funsctions and not GLSL shader. So the performce may be not optimal, but in my experience it ist totally usable.
