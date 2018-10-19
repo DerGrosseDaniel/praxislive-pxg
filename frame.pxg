@@ -4,11 +4,17 @@
   #%graph.y 0
   .code "
 
-    @P(1) @Type.Number(def = 0.5) double scaleA;
-    @P(2) @Type.Number(def = 2) double scaleB;
-    @P(3) @Type.Number(def = 3) double scaleC;
-    @P(4) @Type.Number(def = 4) double scaleD;
-    @P(5) @Type.Number(def = 0.25) double scaleE;
+    @T(0) void reset()\{
+        f=0;
+    \}
+    
+    @P(0) boolean paused;
+    @P(1) @Type.Number(def = 1) double speed;
+    @P(2) @Type.Number(def = 0.5) double scaleA;
+    @P(3) @Type.Number(def = 2) double scaleB;
+    @P(4) @Type.Number(def = 3) double scaleC;
+    @P(5) @Type.Number(def = 4) double scaleD;
+    @P(6) @Type.Number(def = 0.25) double scaleE;
     
     @Out(1) Output frame;
     @Out(2) Output scaledA;
@@ -17,7 +23,7 @@
     @Out(5) Output scaledD;
     @Out(6) Output scaledE;
     
-    int f;
+    double f;
     
     @Override
     public void init() \{
@@ -27,7 +33,8 @@
     
     @Override
     public void update() \{
-        f++;
+        if(!paused)
+            f+=speed;
         frame.send(f);
         scaledA.send(f*scaleA);
         scaledB.send(f*scaleB);
@@ -37,5 +44,6 @@
     \}
     
 "
+  .speed 0.10
   .scale-a 0.01
 }
