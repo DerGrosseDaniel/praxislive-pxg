@@ -1,0 +1,41 @@
+#%praxis.version 4.1.0
+@ ./frame core:custom {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) @Type.Number(def = 0.5) double scaleA;
+    @P(2) @Type.Number(def = 2) double scaleB;
+    @P(3) @Type.Number(def = 3) double scaleC;
+    @P(4) @Type.Number(def = 4) double scaleD;
+    @P(5) @Type.Number(def = 0.25) double scaleE;
+    
+    @Out(1) Output frame;
+    @Out(2) Output scaledA;
+    @Out(3) Output scaledB;
+    @Out(4) Output scaledC;
+    @Out(5) Output scaledD;
+    @Out(6) Output scaledE;
+    
+    int f;
+    
+    @Override
+    public void init() \{
+        f = 0;
+    \}
+
+    
+    @Override
+    public void update() \{
+        f++;
+        frame.send(f);
+        scaledA.send(f*scaleA);
+        scaledB.send(f*scaleB);
+        scaledC.send(f*scaleC);
+        scaledD.send(f*scaleD);
+        scaledE.send(f*scaleE);
+    \}
+    
+"
+  .scale-a 0.01
+}
