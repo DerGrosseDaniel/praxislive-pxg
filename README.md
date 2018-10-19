@@ -69,3 +69,6 @@ Plots inputvalue as white line on black background. Very good for debugging.
 
 * `patterner.pxg`
 Creates Patterns out of input image. I use image funsctions and not GLSL shader. So the performce may be not optimal, but in my experience it ist totally usable.
+
+* `stripes.pxg`
+Creates stripes. Should be rewritten as shader, but works fine.
