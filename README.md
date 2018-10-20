@@ -87,3 +87,6 @@ Generated perlin noise. x and y of pixel Position are fed into is. So are the of
 
 * `falseColor.pxg`
 Patch to help judge exposure of image. See https://www.premiumbeat.com/blog/how-to-use-false-color-nail-skin-tone-exposure/
+
+* `liftGammaGain.pxg`
+Color correction with lift, gamma and gain. Implements in Offet too and the functionalities of `falseColor.pxg`.
