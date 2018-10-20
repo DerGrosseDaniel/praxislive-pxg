@@ -28,7 +28,7 @@ change vibrancy of image, adapted from https://www.interactiveshaderformat.com/s
 created halftone pattern, adapted from msfeldsteins shader https://www.interactiveshaderformat.com/sketches/20
 
 * `edgeDetection.pxg`
-classic edge detection like the name says.
+classic edge detection like the name says. You can change the resolution of the edge detection. There is also a separete value to scale to scale x and y resolution by a factor, which can be used for very cool low res/distortion feedback loops. 
 
 * `LumaKey.pxg`
 Luminance key for video input. Sets the alpha channel to 0 if pixel is brighter or darker than corresponding threshold. If show-matte is checked, the image is black and white and shows alpha channel on all channels (alpha is solid on in this case).
