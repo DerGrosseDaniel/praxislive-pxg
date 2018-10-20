@@ -1,0 +1,152 @@
+#%praxis.version 4.1.0
+@ ./liftGammaGain video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) @Type.Number(min=-1, max = 1, def = 0) double offset;
+    @P(2) @Type.Number(min=0, max = 2, def = 1) double lift;
+    @P(3) @Type.Number(min=0, max = 10, def = 1) double gamma;
+    @P(4) @Type.Number(min=0, max = 10, def = 1) double gain;
+    @P(5) @Type.Boolean(def = false) boolean falseColor;
+//     @P(1) double u1;
+    
+    void updateUniforms() \{
+         shader.set(\"falseColor\", falseColor);
+         shader.set(\"lift\", lift);
+         shader.set(\"gamma\", gamma);
+         shader.set(\"gain\", gain);
+         shader.set(\"offset\", offset);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform vec2 texOffset;
+uniform bool falseColor;
+
+uniform float lift;
+uniform float gamma;
+uniform float gain;
+uniform float offset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+
+  gl_FragColor = texture2D(texture, vertTexCoord.st);
+  vec3 color = gl_FragColor.xyz;
+
+  //http://www.francois-tarlier.com/blog/lift-gamma-gain-color-correction-formula-with-blender-compositing/
+  //outputColor = (gainColor*(inputColor+liftColor*(1-inputColor)))^(1/gammaColor)
+
+   color = color + vec3(offset);
+
+   if(color.x < 0.0)\{
+        color.x =0;
+    \}
+
+   if(color.y < 0.0)\{
+        color.y =0;
+    \}
+
+   if(color.z < 0.0)\{
+        color.z =0;
+    \}
+
+   color.x = pow(gain*(color.x+lift*(1-color.x)),1.0/gamma);
+   color.y = pow(gain*(color.y+lift*(1-color.y)),1.0/gamma);
+   color.z = pow(gain*(color.z+lift*(1-color.z)),1.0/gamma);
+
+   gl_FragColor = vec4(color,1.0);
+
+  
+  
+  if(falseColor == true)\{
+    color = vec3(0.0);
+    //perceived brightness of pixel https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+    float brightness = 0.299*gl_FragColor.r + 0.587*gl_FragColor.g + 0.114*gl_FragColor.b;
+
+    if(brightness > 0.02)\{
+      color = vec3(0.04,0.0,1.0);
+    \}
+
+    if(brightness > 0.1)\{
+      color = vec3(0.08,0.55,1.0);
+    \}
+
+    if(brightness > 0.2)\{
+      color = vec3(0.29,0.29,0.29);
+    \}
+
+    if(brightness > 0.42)\{
+      color = vec3(1.0,0.0,1.0);
+    \}
+
+    if(brightness > 0.48)\{
+      color = vec3(0.48,0.48,0.48);
+    \}
+
+    if(brightness > 0.52)\{
+      color = vec3(0.0,1.0,0.0);
+    \}
+
+    if(brightness > 0.58)\{
+      color = vec3(0.68,0.68,0.68);
+    \}
+
+    if(brightness > 0.78)\{
+      color = vec3(0.68,0.69,0.0);
+    \}
+
+    if(brightness > 0.84)\{
+      color = vec3(0.99,1.0,0.0);
+    \}
+
+    if(brightness > 0.94)\{
+      color = vec3(1.0,0.49,0.0);
+    \}
+
+    if(brightness > 0.99)\{
+      color = vec3(1.0,0.0,0.0);
+    \}
+
+    gl_FragColor = vec4(color,1.0);
+  \}
+\}"
+  .lift 0.0
+}
