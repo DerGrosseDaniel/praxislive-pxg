@@ -56,7 +56,7 @@ generates 3 fully customizable circles with following options:
 add 10 video layers. Each is individual switchable.
 
 * `maskMix.pxg`
-Mixes two input images according to a third mask image. If the mask pixel perceived brightness is 100% the white image will be choosen, if it is 0% the black image. Grey pixel values are mixed accordingly.
+Mixes two input images according to a third mask image. If the mask pixel perceived brightness is 100% the white image will be choosen, if it is 0% the black image. Grey pixel values are mixed accordingly. (Sometime one of the images gets flipped upside down, I have know idea where this bug comes from)
 
 * `bitDepth.pxg`
 Reduces the number of possible colors by rounding the color to the nearest color.
