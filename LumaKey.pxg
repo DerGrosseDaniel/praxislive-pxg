@@ -8,6 +8,7 @@
      @P(2) @Type.Number(min = 0, max = 1, def = 0) float thresDown;
      @P(3) @Type.Number(min = 0, max = 1, def = 0.05) float smoothness;
      @P(4) @Type.Boolean boolean showMatte;
+     @P(5) @Type.Boolean boolean preMultiply;
      
      
     
@@ -17,6 +18,7 @@
            shader.set(\"thresDown\", thresDown);
            shader.set(\"smoothness\", smoothness);
            shader.set(\"showMatte\", showMatte);
+           shader.set(\"preMultiply\", preMultiply);
     \}
 
     
@@ -59,6 +61,7 @@ uniform vec2 texOffset;
 uniform float thresUp;
 uniform float thresDown;
 uniform float smoothness;
+uniform bool preMultiply;
 
 uniform bool showMatte;
 
@@ -82,13 +85,15 @@ void main() \{
     
     if(showMatte == false)\{
         gl_FragColor = vec4(gl_FragColor.rgb, alpha);
+        if(preMultiply == true)\{
+            gl_FragColor.rgb = gl_FragColor.rgb * alpha;
+        \}
     \}else\{
         gl_FragColor = vec4(vec3(alpha), 1);
     \}
   
 \}"
-  .thres-up 0.9824561403508771
-  .thres-down 0.16666666666666666
-  .smoothness 0.03508771929824561
-  .show-matte true
+  .thres-up 0.6130952380952381
+  .thres-down 0.3869047619047619
+  .smoothness 0.0
 }
