@@ -84,3 +84,6 @@ Mirrors image. If you enable `left` the left haf of the image will be copies to 
 
 * `perlin.pxg`
 Generated perlin noise. x and y of pixel Position are fed into is. So are the offsets `x`, `y` and `z`. If you want to pan your noise left to right chande `x`, up and down change `y` and if you want the noise to change gradually, then change `z` slowly. You can also scale the size of the noise.
+
+* `falseColor.pxg`
+Patch to help judge exposure of image. See https://www.premiumbeat.com/blog/how-to-use-false-color-nail-skin-tone-exposure/
