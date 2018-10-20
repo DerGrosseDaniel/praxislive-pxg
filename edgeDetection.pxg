@@ -6,11 +6,12 @@
 
      @P(1) @Type.Number(min = 10,max = 4000, def = 1280) double resolutionX;
      @P(2) @Type.Number(min = 10,max = 4000, def = 720) double resolutionY;
+     @P(3) @Type.Number(min = 0,max = 1, def = 1) double scaleResolution;
 
     
     void updateUniforms() \{
-        shader.set(\"resolutionX\", resolutionX);
-        shader.set(\"resolutionY\", resolutionY);
+        shader.set(\"resolutionX\", resolutionX*scaleResolution);
+        shader.set(\"resolutionY\", resolutionY*scaleResolution);
     \}
 
     
@@ -91,6 +92,7 @@ void main() \{
 \}
 
 "
-  .resolution-x 1920
-  .resolution-y 1080
+  .resolution-x 200
+  .resolution-y 200
+  .scale-resolution 0.5295920367539279
 }
