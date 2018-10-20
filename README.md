@@ -90,3 +90,6 @@ Patch to help judge exposure of image. See https://www.premiumbeat.com/blog/how-
 
 * `liftGammaGain.pxg`
 Color correction with lift, gamma and gain. Implements in Offet too and the functionalities of `falseColor.pxg`.
+
+* `triangle.pxg`
+Generates one triangle.
