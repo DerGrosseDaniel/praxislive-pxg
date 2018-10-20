@@ -58,7 +58,7 @@ void main() \{
   gl_FragColor = texture2D(texture, vertTexCoord.st);
   
   if(bypass == false)\{
-    vec3 color = vec3(0.0);
+    vec3 color = vec3(1.0);
     //perceived brightness of pixel https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
     float brightness = 0.299*gl_FragColor.r + 0.587*gl_FragColor.g + 0.114*gl_FragColor.b;
 
