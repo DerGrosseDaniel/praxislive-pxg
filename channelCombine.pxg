@@ -1,0 +1,98 @@
+#%praxis.version 4.1.0
+@ ./channelCombine video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+    @P(1) boolean alphaOn;
+    @P(2) boolean preMultiply;
+    @P(3) boolean lightnessForAlpha;
+    
+    void updateUniforms() \{
+//         shader.set(\"red\",red);
+         shader.set(\"green\",green);
+         shader.set(\"blue\",blue);
+         shader.set(\"alpha\",alpha);
+         shader.set(\"alphaOn\",alphaOn);
+         shader.set(\"preMultiply\",preMultiply);
+         shader.set(\"lightnessForAlpha\",lightnessForAlpha);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage red;
+    @In(1)
+    PImage green;
+    @In(2)
+    PImage blue;
+    @In(3)
+    PImage alpha;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(red, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;  //red channel
+uniform sampler2D green;
+uniform sampler2D blue;
+uniform sampler2D alpha;
+
+uniform bool preMultiply;
+uniform bool alphaOn;
+uniform bool lightnessForAlpha;
+
+uniform vec2 texOffset;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+void main() \{
+  vec2 st = vertTexCoord.st;
+  gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+  gl_FragColor.r = texture2D(texture,st).r;
+  gl_FragColor.g = texture2D(green,st).g;
+  gl_FragColor.b = texture2D(blue,st).b;
+  if(lightnessForAlpha)\{
+    vec3 tempCol = texture2D(blue,st).rgb;
+    gl_FragColor.a = 0.299*gl_FragColor.r + 0.587*gl_FragColor.g + 0.114*gl_FragColor.b;
+  \} else \{
+    gl_FragColor.a = texture2D(alpha,st).a;
+  \}
+
+  if(alphaOn == true)\{
+    gl_FragColor.a = 1.0;
+  \}
+
+  if(preMultiply == true)\{
+    gl_FragColor.rgb = gl_FragColor.rgb * gl_FragColor.a;
+  \}
+
+\}"
+  .pre-multiply true
+}
