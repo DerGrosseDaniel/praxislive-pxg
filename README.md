@@ -96,3 +96,6 @@ Generates one triangle.
 
 * `HSLkey.pxg`
 HSL keyer with seperate upper, lower limit and smoothness for hue, saturation and lightness. You can also premultiply, show the mask or invert key.
+
+* `channelCombine.pxg`
+Generates image out of red, green, blue and alpha channel of according inputs. Alpha can be set on, be premultiplied or set to lightness of the alpha-input if it doesn't have an alpha value.
