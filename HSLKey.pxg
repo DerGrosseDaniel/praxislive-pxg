@@ -1,0 +1,186 @@
+#%praxis.version 4.1.0
+@ ./HSLKey video:gl:p2d {
+  #%graph.x 0
+  #%graph.y 0
+  .code "
+
+     
+     @P(1) @Type.Number(min = 0, max = 1, def = 0) float hueLower;
+     @P(2) @Type.Number(min = 0, max = 1, def = 1) float hueUpper;
+     @P(3) @Type.Number(min = 0, max = 1, def = 0) float hueSmoothness;
+     @P(4) @Type.Boolean boolean invertHue;
+     
+     @P(5) @Type.Number(min = 0, max = 1, def = 0) float satLower;
+     @P(6) @Type.Number(min = 0, max = 1, def = 1) float satUpper;
+     @P(7) @Type.Number(min = 0, max = 1, def = 0) float satSmoothness;
+     @P(8) @Type.Boolean boolean invertSat;
+     
+     @P(9) @Type.Number(min = 0, max = 1, def = 0) float lightessLower;
+     @P(10) @Type.Number(min = 0, max = 1, def = 1) float lightessUpper;
+     @P(11) @Type.Number(min = 0, max = 1, def = 0) float lightessSmoothness;
+     @P(12) @Type.Boolean boolean invertLightness;
+     
+     @P(13) @Type.Boolean boolean invertMatte;
+     
+     @P(14) @Type.Boolean boolean showMatte;
+     @P(15) @Type.Boolean boolean preMultiply;
+     
+     
+    
+    void updateUniforms() \{
+//         shader.set(\"u1\", u1);
+           shader.set(\"hueLower\", hueLower);
+           shader.set(\"hueUpper\", hueUpper);
+           shader.set(\"hueSmoothness\", hueSmoothness);
+           shader.set(\"invertHue\", invertHue);
+           
+           shader.set(\"satLower\", satLower);
+           shader.set(\"satUpper\", satUpper);
+           shader.set(\"satSmoothness\", satSmoothness);
+           shader.set(\"invertSat\", invertSat);
+           
+           shader.set(\"lightessLower\", lightessLower);
+           shader.set(\"lightessUpper\", lightessUpper);
+           shader.set(\"lightessSmoothness\", lightessSmoothness);
+           shader.set(\"invertLightness\", invertLightness);
+           
+           shader.set(\"invertMatte\", invertMatte);
+           
+           shader.set(\"showMatte\", showMatte);
+           shader.set(\"preMultiply\", preMultiply);
+    \}
+
+    
+    // BOILERPLATE BELOW
+    @In(0)
+    PImage in;
+    @P(0)
+    @Type.String(mime = GLSL_FRAGMENT_MIME, template = DEFAULT_FRAGMENT_SHADER)
+    @OnChange(\"updateShader\")
+    @Config.Port(false)
+    String fragment;
+
+    PShader shader;
+
+    @Override
+    public void setup() \{
+        updateShader();
+    \}
+
+    @Override
+    public void draw() \{
+        if (shader == null) \{
+            shader = createShader(DEFAULT_VERTEX_SHADER,
+                    fragment.isEmpty() ? DEFAULT_FRAGMENT_SHADER : fragment);
+        \}
+        shader(shader);
+        updateUniforms();
+        image(in, 0, 0);
+        resetShader();
+    \}
+
+    void updateShader() \{
+        shader = null;
+    \}
+
+"
+  .fragment "uniform sampler2D texture;
+
+uniform float hueLower;
+uniform float hueUpper;
+uniform float hueSmoothness;
+uniform bool invertHue;
+     
+uniform float satLower;
+uniform float satUpper;
+uniform float satSmoothness;
+uniform bool invertSat;
+     
+uniform float lightessLower;
+uniform float lightessUpper;
+uniform float lightessSmoothness;
+uniform bool invertLightness;
+     
+uniform bool invertMatte;
+     
+uniform bool showMatte;
+uniform bool preMultiply;
+
+varying vec4 vertColor;
+varying vec4 vertTexCoord;
+
+vec3 rgb2hsv(vec3 c);
+vec3 hsv2rgb(vec3 c);
+float getAlpha(float val, float thresDown, float thresUp, float smoothness);
+
+void main() \{
+
+ 
+    gl_FragColor = texture2D(texture, vertTexCoord.st) * vertColor;
+
+    vec3 color = rgb2hsv(gl_FragColor.xyz);
+
+    float alpha = 1;
+
+    
+    alpha = getAlpha(color.y, hueLower-0.00001, hueUpper+0.00001, hueSmoothness+0.00001); //+0.0001 is for correcting rounding errors
+    if(invertHue == true)\{
+        alpha = 1-alpha;
+    \}
+
+
+    float alphaS = getAlpha(color.x, satLower-0.00001, satUpper+0.00001, satSmoothness+0.00001);
+    if(invertSat == true)\{
+        alphaS = 1-alphaS;
+    \}
+    alpha*=alphaS;
+
+    //alpha = color.y;
+
+    float alphaL = getAlpha(color.z, lightessLower-0.00001, lightessUpper+0.00001, lightessSmoothness+0.00001); //+0.0001 is for correcting rounding errors
+    if(invertLightness == true)\{
+        alphaL = 1-alphaL;
+    \}
+
+    alpha*=alphaL;
+    
+
+    
+    if(showMatte == false)\{
+        gl_FragColor = vec4(gl_FragColor.rgb, alpha);
+        if(preMultiply == true)\{
+            gl_FragColor.rgb = gl_FragColor.rgb * alpha;
+        \}
+    \}else\{
+        gl_FragColor = vec4(vec3(alpha), 1);
+    \}
+  
+\}
+
+
+float getAlpha(float val, float thresDown, float thresUp, float smoothness)\{
+    float alpha = smoothstep(thresDown-smoothness,thresDown,val);
+    alpha = alpha * smoothstep(1-(thresUp+smoothness),1-thresUp, 1-val);
+    return alpha;
+\}
+
+
+
+vec3 rgb2hsv(vec3 c)	\{
+	vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+	//vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+	//vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+	vec4 p = c.g < c.b ? vec4(c.bg, K.wz) : vec4(c.gb, K.xy);
+	vec4 q = c.r < p.x ? vec4(p.xyw, c.r) : vec4(c.r, p.yzx);
+	
+	float d = q.x - min(q.w, q.y);
+	float e = 1.0e-10;
+	return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+\}
+
+vec3 hsv2rgb(vec3 c)	\{
+	vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+	return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+\}"
+}
