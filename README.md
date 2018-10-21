@@ -93,3 +93,6 @@ Color correction with lift, gamma and gain. Implements in Offet too and the func
 
 * `triangle.pxg`
 Generates one triangle.
+
+* `HSLkey.pxg`
+HSL keyer with seperate upper, lower limit and smoothness for hue, saturation and lightness. You can also premultiply, show the mask or invert key.
